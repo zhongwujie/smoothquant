@@ -26,6 +26,7 @@ def smooth_ln_fcs(ln, fcs, act_scales, alpha=0.5):
 
     device, dtype = fcs[0].weight.device, fcs[0].weight.dtype
     act_scales = act_scales.to(device=device, dtype=dtype)
+    # weight: (out_features, in_features)
     weight_scales = torch.cat(
         [fc.weight.abs().max(dim=0, keepdim=True)[0] for fc in fcs], dim=0
     )
@@ -38,6 +39,7 @@ def smooth_ln_fcs(ln, fcs, act_scales, alpha=0.5):
         .to(dtype)
     )
 
+    # merge the scales into the layer norm and linear layers
     ln.weight.div_(scales)
     ln.bias.div_(scales)
 
